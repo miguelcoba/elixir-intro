@@ -81,20 +81,876 @@ Elixir 1.2.1
 					</section>
 					<section>
 						<h1>Interactive Elixir IEx</h1>
-						<p></p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
 $ iex
 Erlang/OTP 18 [erts-7.2.1] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
 
 Interactive Elixir (1.2.1) - press Ctrl+C to exit (type h() ENTER for help)
-iex(1)> 1 + 2
+iex> 1 + 2
 3
-iex(2)> "Hello" <> " world!"
+iex> "Hello" <> " world!"
 "Hello world!"
-iex(3)>
+iex>
+						</code></pre>
+					</section>
+					<section>
+						<h1>Running scripts</h1>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+# script.exs
+IO.puts "Hello World!"
+
+# Execute it in shell
+$ elixir script.exs
+						</code></pre>
+					</section>
+					<section>
+						<h1>Conventions</h1>
+						<p><span class="fragment highlight-blue">.exs</span> for interpreted Elixir files</p>
+						<p><span class="fragment highlight-blue">.ex</span> for compiled Elixir files</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Basic Types</h1>
+					</section>
+					<section>
+						<h2>Elixir Types</h2>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> 1          # integer
+iex> 1.0        # float
+iex> 1.0e-10    # float
+iex> true       # boolean
+iex> :atom      # atom / symbol
+iex> "elixir"   # string
+iex> [1, 2, 3]  # list
+iex> {1, 2, 3}  # tuple
+iex> 0b1010     # binary
+iex> 0x777      # octal
+iex> 0x1F       # hexadecimal
+						</code></pre>
+					</section>
+					<section>
+						<h2>Arithmetic</h2>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> 1 + 2
+3
+iex> 2 * 2
+4
+iex> 10 / 2 # / always returns float
+5.0
+iex> div(10, 2) # / integer division
+5
+iex> div 10, 2 # parentheses are optional
+5
+iex> rem 10, 3 # remainder
+1
+						</code></pre>
+					</section>
+					<section>
+						<h2>Booleans and predicates</h2>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> true
+true
+iex> false
+false
+iex> true == false
+false
+iex> is_boolean(true)
+true
+iex> is_integer(1)
+true
+iex> is_float(1.0e-10)
+true
+iex> is_number(1)
+true
+iex> is_number(1.0)
+true
+						</code></pre>
+					</section>
+					<section>
+						<h2>Atoms</h2>
+						<p>Atoms are constants where their name is its own value (akin to symbols in other languages)</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> :hello
+:hello
+iex> :hello == :world
+false
+iex> :hello == "hello" # atoms are not strings
+false
+iex> :"hello" # but you can create atoms from strings
+:hello
+iex> :hello == :"hello" # but you can create atoms from strings
+true
+						</code></pre>
+					</section>
+					<section>
+						<h2>String</h2>
+						<p>String in Elixir are encoded in UTF-8 and delimited by double quotes</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> "Cobá ö ç ø"
+"Cobá ö ç ø"
+iex> "hello\nworld"  # line breaks
+"hello\nworld"
+iex> "hello
+...> world"
+"hello\nworld"
+iex> IO.puts "hello\nworld" # Print string with IO.puts/1
+hello
+world
+:ok
+						</code></pre>
+					</section>
+					<section>
+						<h2>String interpolation</h2>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> "1 + 2 = #{1+2}"
+"1 + 2 = 3"
+iex> "hello #{:world}"
+"hello world"
+iex> "Is 1 integer? #{is_integer(1)}"
+"Is 1 integer? true"
+						</code></pre>
+					</section>
+					<section>
+						<h2>String concatenation</h2>
+						<p>String concatenation is done with <><p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> "foo" <> "bar"
+"foobar"
+						</code></pre>
+					</section>
+					<section>
+						<h2>String internals</h2>
+						<p>Strings in Elixir are represented internally by binaries which are sequences of bytes</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> is_binary("hello")
+true
+iex> byte_size("Cobá ö ç ø") # number of bytes in a string
+14
+iex> String.length("Cobá ö ç ø") # number of chars (length) in the string
+10
 						</code></pre>
 					</section>
 				</section>
+
+				<section>
+					<section>
+						<h2>Anonymous Functions</h2>
+						<p>Functions are delimited by the keywords <span class="fragment highlight-red">fn</span> and <span class="fragment highlight-red">end</span></p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> add = fn a, b -> a + b end
+#Function<12.54118792/2 in :erl_eval.expr/5>
+iex> is_function(add)
+true
+iex> is_function(add, 2)
+true
+iex> is_function(add, 3)
+false
+						</code></pre>
+					</section>
+					<section>
+						<h2>Anonymous Functions</h2>
+						<p>A dot (.) between the variable and parenthesis is required to invoke an anonymous function</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> add.(1,2)
+3
+						</code></pre>
+						<p>Anonymous functions are closures: they can access variables that are in scope when the function is defined</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> add_two = fn a -> add.(a, 2) end
+#Function<6.54118792/1 in :erl_eval.expr/5>
+iex> add_two.(2)
+4
+						</code></pre>
+					</section>
+					<section>
+						<h2>Anonymous Functions</h2>
+						<p>A variable assigned inside a function does not affect its surrounding environment</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> x = 42
+42
+iex> (fn -> x = 0 end).()
+0
+iex> x
+42
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Lists</h2>
+						<p>Elixir uses square brackets to specify a list of values</p>
+						<p>Values can be of any type</p>
+						<p>Lists are Linked Lists</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> [1, 2, true, 3]
+[1, 2, true, 3]
+iex> length [1, 2, 3]
+3
+						</code></pre>
+					</section>
+					<section>
+						<h2>Lists</h2>
+						<h4>Concatenation</h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> [1, 2, 3] ++ [4, 5, 6]
+[1, 2, 3, 4, 5, 6]
+						</code></pre>
+						<h4>Substraction</h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> [1, true, 2, false, 3, true] -- [true, false]
+[1, 2, 3, true]
+						</code></pre>
+					</section>
+					<section>
+						<h2>Lists</h2>
+						<h4>Head</h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> hd([1, 2, 3])
+1
+						</code></pre>
+						<h4>Tail</h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> tl([1, 2, 3])
+[2, 3]
+						</code></pre>
+					</section>
+					<section>
+						<h2>Lists</h2>
+						<ul>
+							<li>Lists are stored in memory as linked lists, meaning that each element in a list holds its value and points to the following element until the end of the list is reached</li>
+							<li>We call each pair of value and pointer a cons cell</li>
+							<li>We can construct a cons cell with |</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Lists</h2>
+						<h4>List construction</h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> list = [1, 2]
+[1, 2]
+iex> new_list = [ 0 | list ] # head and pointer to next element separated by |
+[0, 1, 2]
+iex> [ 1 | []]
+[1]
+iex> [ 1 | [2]]
+[1, 2]
+iex> [ 1 | [2, 3]]
+[1, 2, 3]
+iex> [ 1 | [2 | [3 | [4 | []]]]]
+[1, 2, 3, 4]
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Tuples</h2>
+						<ul>
+							<li>Elixir uses curly brackets to define tuples</li>
+							<li>Like lists, tuples can hold any value</li>
+							<li>Tuples store elements contiguously in memory</li>
+							<li>Accessing a tuple element per index or getting the tuple size is a fast operation</li>
+							<li>Tuples indexs start from zero</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Tuples</h2>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> {:atom, "any", "value", 3, 2.0}
+{:atom, "any", "value", 3, 2.0}
+iex> tuple_size {:atom, "any", "value", 3, 2.0}
+5
+						</code></pre>
+					</section>
+					<section>
+						<h2>Tuples</h2>
+						<h4>Accessing elements</h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> tuple = {:hello, "world"}
+{:hello, "world"}
+iex> elem(tuple, 1)
+"world"
+						</code></pre>
+						<h4>Putting elements</h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> put_elem(tuple, 1, 3.1416) # new tuple is returned
+{:hello, 3.1416}
+iex> tuple # original tuple was not modified
+{:hello, "world"}
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>List vs Tuples</h3>
+						<h4>Lists</h4>
+						<ul>
+							<li>Lists are stored in memory as linked lists</li>
+							<li>Accessing the length of a list is a linear operation</li>
+							<li>Updating a list is fast as long as we are prepending elements</li>
+						</ul>
+						<h4>Tuples</h4>
+						<ul>
+							<li>Tuples are stored contiguously in memory</li>
+							<li>Getting the tuple size or accessing an element by index is fast</li>
+							<li>Updating or adding elements to tuples is expensive (requires copying the whole tuple)</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Pattern matching</h1>
+					</section>
+					<section>
+						<h2></h2>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<h4></h4>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+						<h3></h3>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+				</section>
+
 
 				<section>
 					<section>
