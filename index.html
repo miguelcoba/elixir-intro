@@ -1007,21 +1007,66 @@ IO.puts Concat.join("Hello", "world", "_") #=> Hello_world
 						<h1>Recursion</h1>
 					</section>
 					<section>
-						<h3>Recursion</h3>
-						<p></p>
+						<h3>Loops</h3>
+						<p>Functional languages rely on recursion to do loops: a function is called recursively until a condition is reached that stops the recursive action from continuing. No data is mutated in this process</p>
 						<pre><code class="" data-trim style="font-size: 18px;">
+defmodule Recursion do
+  def print_multiple_times(msg, n) when n <= 1 do
+    IO.puts msg
+  end
+
+  def print_multiple_times(msg, n) do
+    IO.puts msg
+    print_multiple_times(msg, n - 1)
+  end
+end
+
+Recursion.print_multiple_times("Hello!", 3)
+# Hello!
+# Hello!
+# Hello!
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<p></p>
+						<h3>Recursion example 1</h3>
+						<h4>Map and reduce</h4>
 						<pre><code class="" data-trim style="font-size: 18px;">
+defmodule Math do
+  def sum_list([head|tail], accumulator) do
+    sum_list(tail, head + accumulator)
+  end
+
+  def sum_list([], accumulator) do
+    accumulator
+  end
+end
+
+IO.puts Math.sum_list([1, 2, 3], 0) #=> 6
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<p></p>
+						<h3>The Enum module</h3>
+						<p>The Enum module contains functions to manipulate lists instead of doing it manually</p>
 						<pre><code class="" data-trim style="font-size: 18px;">
+iex> Enum.reduce([1, 2, 3], 0, fn(x, acc) -> x + acc end)
+6
+iex> Enum.map([1, 2, 3], fn(x) -> x * 2 end)
+[2, 4, 6]
+						</code></pre>
+					</section>
+					<section>
+						<h3>Functions exercise 1</h3>
+						<p>Write a module with a function to calculate the factorial of n</p>
+						<pre><code class="fragment" data-trim style="font-size: 18px;">
+defmodule Math do
+	def factorial(n), do: do_factorial(n, 1)
+
+	defp do_factorial(n, acc) when n == 0, do: acc
+	defp do_factorial(n, acc), do: do_factorial(n - 1, acc * n)
+end
+
+IO.puts Math.factorial(50)
+# 30414093201713378043612608166064768844377641568960512000000000000
 						</code></pre>
 					</section>
 				</section>
