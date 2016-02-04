@@ -936,6 +936,94 @@ defmodule Math do
 end
 						</code></pre>
 					</section>
+					<section>
+						<h3>Function capturing</h3>
+						<p>The notation name/arity to refer to functions can be used to retrieve a named function as a function type</p>
+						<pre><code class="" data-trim style="font-size: 18px;">
+iex> Math.zero?(0)
+true
+iex> fun = &Math.zero?/1
+&Math.zero?/1
+iex> is_function(fun)
+true
+iex> fun.(0)
+true
+						</code></pre>
+					</section>
+					<section>
+						<h3>Function capturing</h3>
+						<p>Local or imported functions, like is_function/1, can be captured without the module</p>
+						<pre><code class="" data-trim style="font-size: 18px;">
+iex> fun2 = &is_function/1
+&:erlang.is_function/1
+iex> fun2.(fun)
+true
+iex> fun2.(fun2)
+true
+						</code></pre>
+					</section>
+					<section>
+						<h3>Function capturing</h3>
+						<p>Note the capture syntax can also be used as a shortcut for creating functions</p>
+						<p>The &n represents the nth argument passed into the function</p>
+						<pre><code class="" data-trim style="font-size: 18px;">
+iex> fun3 = &(&1 + 1)
+#Function<6.54118792/1 in :erl_eval.expr/5>
+iex> fun3.(1)
+2
+						</code></pre>
+						<p><code class="elixir">&(&1+1)</code> above is exactly the same as <code class="elixir">fn x -> x + 1 end</code></p>
+					</section>
+					<section>
+						<h3>Function capturing</h3>
+						<p>Capture syntax can be used for module functions, too</p>
+						<pre><code class="" data-trim style="font-size: 18px;">
+iex(3)> fun4 = &Kernel.max(-&1, -&2)
+#Function<12.54118792/2 in :erl_eval.expr/5>
+iex(4)> Kernel.max(1, 2)
+2
+iex(5)> fun4.(1, 2)
+-1
+						</code></pre>
+					</section>
+					<section>
+						<h3>Default arguments</h3>
+						<p>Elixir support default arguments</p>
+						<pre><code class="" data-trim style="font-size: 18px;">
+defmodule Concat do
+  def join(a, b, sep \\ " ") do
+    a <> sep <> b
+  end
+end
+
+IO.puts Concat.join("Hello", "world")      #=> Hello world
+IO.puts Concat.join("Hello", "world", "_") #=> Hello_world
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Recursion</h1>
+					</section>
+					<section>
+						<h3>Recursion</h3>
+						<p></p>
+						<pre><code class="" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
+						<pre><code class="" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
+						<pre><code class="" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
 				</section>
 
 					<section>
