@@ -648,6 +648,8 @@ iex> {^a, 2, []} = {2, 2, []}
 					<section>
 						<h3>case</h3>
 						<p>Allows us to compare a value against many patterns until we find a matching one</p>
+						<p>Execute clause body corresponding to the first clause that matches</p>
+						<p>If no clause matches, an error is raised.</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
 iex> case {1, 2, 3} do
 ...>   {4, 5, 6} ->
@@ -674,602 +676,273 @@ iex> case {1, 2, 3} do
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<p></p>
+						<h3>cond</h3>
+						<p>Evaluates the expression corresponding to the first clause that evaluates to a truthy value</p>
+						<p>Raises an error if all conditions evaluate to nil or false</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> cond do
+...>   1 + 1 == 1 ->
+...>     "This will never match"
+...>   2 * 2 != 4 ->
+...>     "Nor this"
+...>   true ->
+...>     "This will"
+...> end
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<p></p>
+						<h3>if/unless</h3>
+						<p>if and unless are macros in Elixir</p>
+						<p>They expect the first argument to be a condition and the second argument to be a keyword list</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> if(true, do: "hello world")
+"hello world"
+iex> unless(true, do: "hello world")
+nil
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<p></p>
+						<h3>if/unless</h3>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> if(true, do: "hello", else: "bye")
+"hello"
+iex> unless(true, do: "hello", else: "bye")
+"bye"
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<p></p>
+						<h3>if/unless</h3>
+						<p>It's also possible to pass a block to the if/else macros</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> if true do
+...>   "hello"
+...> end
+"hello"
+iex> unless true do
+...>   "hello"
+...> end
+nil
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<p></p>
+						<h3>if/unless</h3>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<p></p>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<p></p>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<p></p>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<p></p>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> if true do
+...>   "hello"
+...> else
+...>   "world"
+...> end
+"hello"
+iex> unless true do
+...>   "hello"
+...> else
+...>   "bye"
+...> end
+"bye"
 						</code></pre>
 					</section>
 				</section>
 
 				<section>
 					<section>
-						<h3></h3>
-						<h4></h4>
+						<h2>Keyword lists</h2>
+						<p>A keyword list is a list of tuples where the first item of each tuple (i.e. the key) is an atom</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> list = [{:a, 1}, {:b, 2}]
+[a: 1, b: 2]
+iex> list == [a: 1, b: 2]  # Syntactic sugar
+true
+iex> list[:a]
+1
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<h4></h4>
+						<h2>Keyword lists</h2>
+						<p>Adding values to a keyword list</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> list ++ [c: 3]
+[a: 1, b: 2, c: 3]
+iex> [a: 0] ++ list
+[a: 0, a: 1, b: 2]
 						</code></pre>
-						<h3></h3>
+					</section>
+					<section>
+						<h2>Keyword lists</h2>
+						<p>Values added to the front are the ones fetched on lookup</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> new_list = [a: 0] ++ list # another tuple with same key added to front
+[a: 0, a: 1, b: 2]
+iex> new_list[:a]
+0
 						</code></pre>
 					</section>
 				</section>
 
 				<section>
 					<section>
-						<h3></h3>
-						<h4></h4>
+						<h2>Maps</h2>
+						<p>A map is a collection of key/value pairs</p>
+						<p>A map is created using the %{}</p>
+						<p>Maps allow any value as a key.</p>
+						<p>Maps’ keys do not follow any ordering.</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> map = %{:a => 1, 2 => :b}
+%{2 => :b, :a => 1}
+iex> map[:a]
+1
+iex> map[2]
+:b
+iex> map[:c]
+nil
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<h4></h4>
+						<h3>Maps and pattern matching</h3>
+						<p>When a map is used in a pattern, it will always match on a subset of the given value</p>
+						<p>A map matches as long as the keys in the pattern exist in the given map. Therefore, an empty map matches all maps.</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> %{} = %{:a => 1, 2 => :b}
+%{:a => 1, 2 => :b}
+iex> %{:a => a} = %{:a => 1, 2 => :b}
+%{:a => 1, 2 => :b}
+iex> a
+1
+iex> %{:c => c} = %{:a => 1, 2 => :b}
+** (MatchError) no match of right hand side value: %{2 => :b, :a => 1}
 						</code></pre>
-						<h3></h3>
+					</section>
+					<section>
+						<h3>Maps and variables</h3>
+						<p>Variables can be used when accessing, matching and adding map keys</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> n = 1
+1
+iex> map = %{n => :one}
+%{1 => :one}
+iex> map[n]
+:one
+iex> map[1]
+:one
+iex> %{^n => :one} = %{1 => :one, 2 => :two, 3 => :three} # will match
+%{1 => :one, 2 => :two, 3 => :three}
+						</code></pre>
+					</section>
+					<section>
+						<h3>The Map Module</h3>
+						<p>Convenience functions to manipulate maps</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> Map.get(%{:a => 1, 2 => :b}, :a)
+1
+iex> Map.to_list(%{:a => 1, 2 => :b})
+[{2, :b}, {:a, 1}]
+						</code></pre>
+					</section>
+					<section>
+						<h3>Maps and keyword syntax</h3>
+						<p>When all the keys in a map are atoms, you can use the keyword syntax for convenience</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> map = %{a: 1, b: 2}
+%{a: 1, b: 2}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Maps and dot syntax</h3>
+						<p>Maps is that they provide their own syntax for updating and accessing atom keys</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> map = %{:a => 1, 2 => :b}
+%{:a => 1, 2 => :b}
+iex> map.a
+1
+iex> map.c
+** (KeyError) key :c not found in: %{2 => :b, :a => 1}
+iex> %{map | :a => 2} # updating the map
+%{:a => 2, 2 => :b}
+iex> %{map | :c => 3} # key must exist before updating it
+** (KeyError) key :c not found in: %{2 => :b, :a => 1}
 						</code></pre>
 					</section>
 				</section>
 
 				<section>
 					<section>
-						<h3></h3>
-						<h4></h4>
+						<h1>Modules</h1>
+					</section>
+					<section>
+						<h3>Modules</h3>
+						<p>We group several functions into modules</p>
+						<p>We use the defmodule macro to define a new module</p>
+						<p>We use the def macro to define a function inside a module</p>
+					</section>
+					<section>
+						<h3>Modules</h3>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> defmodule Math do
+...>   def sum(a, b) do
+...>     a + b
+...>   end
+...> end
+
+iex> Math.sum(1, 2)
+3
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<h4></h4>
+						<h3>Modules</h3>
+						<p>We use the <span class="fragment highlight-red">defp</span> macro to define a private function inside a module</p>
+						<p>A function defined with def/2 can be invoked from other modules while a private function can only be invoked locally</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+defmodule Math do
+  def sum(a, b) do
+    do_sum(a, b)
+  end
+
+  defp do_sum(a, b) do
+    a + b
+  end
+end
+
+IO.puts Math.sum(1, 2)    #=> 3
+IO.puts Math.do_sum(1, 2) #=> ** (UndefinedFunctionError)
 						</code></pre>
-						<h3></h3>
+					</section>
+					<section>
+						<h3>Guards and multiple guards in functions</h3>
+						<p>Function declarations also support guards and multiple clauses</p>
+						<p>If a function has several clauses, Elixir will try each clause until it finds one that matches.</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+defmodule Math do
+  def zero?(0) do
+    true
+  end
+
+  def zero?(x) when is_number(x) do # another declaration of zero? function with a guard
+    false
+  end
+end
+
+IO.puts Math.zero?(0)       #=> true
+IO.puts Math.zero?(1)       #=> false
+IO.puts Math.zero?([1,2,3]) #=> ** (FunctionClauseError)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Functions and block syntax</h3>
+						<p>Similar to constructs like if, named functions support both do: and do/end block syntax</p>
+						<p>do/end is just a convenient syntax for the keyword list format</p>
+						<pre><code class="" data-trim style="font-size: 18px;">
+defmodule Math do
+  def zero?(0), do: true
+  def zero?(x) when is_number(x), do: false
+end
 						</code></pre>
 					</section>
 				</section>
 
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-
-				<section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-					<section>
-						<h3></h3>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h3></h3>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-					</section>
-				</section>
-
-				<section>
 					<section>
 						<h3>Slides</h3>
-						<p><a href=" http://miguelcoba.github.io/elixir-concurrency">http://miguelcoba.github.io/elixir-concurrency</a></p>
+						<p><a href=" http://miguelcoba.github.io/elixir-concurrency">http://miguelcoba.github.io/elixir-introduction</a></p>
 						<h3>Source code</h3>
-						<p><a href="https://github.com/miguelcoba/elixir-concurrency-code">https://github.com/miguelcoba/elixir-concurrency-code</a></p>
+						<p><a href="https://github.com/miguelcoba/elixir-concurrency-code">https://github.com/miguelcoba/elixir-introduction</a></p>
 					</section>
 				</section>
 
