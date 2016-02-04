@@ -407,32 +407,323 @@ iex> tuple # original tuple was not modified
 						<h1>Pattern matching</h1>
 					</section>
 					<section>
-						<h2></h2>
-						<h4></h4>
+						<h2>The match operator</h2>
+						<ul>
+							<li>In Elixir, the = operator is actually called the match operator</li>
+							<li>The equals sign is not an assignment, is like an assertion</li>
+							<li>It succeeds if Elixir can find a way of making the left-hand side equal the right-hand side.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>The match operator</h3>
+						<p>In this case, the left-hand side is a variable and the right-hand side is an integer literal, so Elixir can make the match true by <span class="fragment highlight-red">binding</span> the variable a to value 1.</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
-						</code></pre>
-						<h4></h4>
-						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> a = 1
+1
+iex> a
+1
 						</code></pre>
 					</section>
 					<section>
-						<h3></h3>
-						<h4></h4>
+						<h3>The match operator</h3>
+						<p>This is another match, and it passes. The variable a already has the value 1, so what’s on the left of the equals sign is the same as what’s on the right, and the match succeeds.</p>
+						<p>No new binding is performed</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> 1 = a
+1
 						</code></pre>
-						<h3></h3>
+					</section>
+					<section>
+						<h3>The match operator</h3>
+						<p>This raises an error. A variable can only be assigned on the left side of =</p>
+						<p>Elixir will only change the value of a variable on the left side of an equals sign. On the right a variable is replaced with its value</p>
+						<p>This is equivalent to 2 = 1 and causes an error</p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> 2 = a
+** (MatchError) no match of right hand side value: 1
+						</code></pre>
+					</section>
+					<section>
+						<h3>Pattern matching</h3>
+						<p>The match operator is not only used to match against simple values, but it is also useful for destructuring more complex data types</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+# Pattern matching on tuples
+iex> {a, b, c} = {:hello, "world", 42}
+{:hello, "world", 42}
+iex> a
+:hello
+iex> b
+"world"
+						</code></pre>
+					</section>
+					<section>
+						<h3>Pattern matching</h3>
+						<p>A pattern match will error in the case the sides can’t match</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> {a, b, c} = {:hello, "world"}
+** (MatchError) no match of right hand side value: {:hello, "world"}
+						</code></pre>
+					</section>
+						<section>
+						<h3>Pattern matching</h3>
+						<p>A pattern match will error when comparing different types</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> {a, b, c} = [:hello, "world", "!"]
+** (MatchError) no match of right hand side value: [:hello, "world", "!"]
+						</code></pre>
+					</section>
+						<section>
+						<h3>Pattern matching</h3>
+						<p>But, it can match on specific values</p>
+						<p>This asserts that the left side will only match the right side when the right side is a tuple that starts with the atom :ok</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> {:ok, result} = {:ok, 13}
+{:ok, 13}
+iex> result
+13
+
+iex> {:ok, result} = {:error, :oops}
+** (MatchError) no match of right hand side value: {:error, :oops}
+						</code></pre>
+					</section>
+						<section>
+						<h3>Pattern matching</h3>
+						<p>Pattern matching on lists</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> [a, b, c] = [1, 2, 3]
+[1, 2, 3]
+iex> a
+1
+						</code></pre>
+					</section>
+						<section>
+						<h3>Pattern matching</h3>
+						<p>A list also supports matching on its own head and tail</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> [head | tail] = [1, 2, 3]
+[1, 2, 3]
+iex> head
+1
+iex> tail
+[2, 3]
+						</code></pre>
+					</section>
+					<section>
+						<h2>The pin operator</h2>
+						<p>Variables in Elixir can be rebound</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> x = 1 # x bound to 1
+1
+iex> x = 2 # x rebound to 2
+2
+						</code></pre>
+					</section>
+					<section>
+						<h3>The pin operator</h3>
+						<p>The pin operator ^ should be used when you want to pattern match against an existing variable’s value rather than rebinding the variable</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> x = 1
+1
+iex> ^x = 2
+** (MatchError) no match of right hand side value: 2
+iex> {y, ^x} = {2, 1}
+{2, 1}
+iex> y
+2
+iex> {y, ^x} = {2, 2} # this is equivalent to {y, 1} = {2, 2}, that won't match
+** (MatchError) no match of right hand side value: {2, 2}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Underscore</h3>
+						<p>If you don’t care about a particular value in a pattern, the common practice is to bind those values to the underscore, _</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> [h|_] = [1, 2, 3]
+[1, 2, 3]
+iex> h
+1
+						</code></pre>
+					</section>
+					<section>
+						<h3>Pattern matching exercise 1</h3>
+						<p>Bind the list variable to [1, 2, 3]</p>
+						<pre><code class="elixir fragment" data-trim style="font-size: 18px;">
+iex> list = [1, 2, 3]
+[1, 2, 3]
+iex> list
+[1, 2, 3]
+						</code></pre>
+					</section>
+					<section>
+						<h3>Pattern matching exercise 2</h3>
+						<p>Bind the a to 1, b to 2 and c to 3 in [1, 2, 3]</p>
+						<pre><code class="elixir fragment" data-trim style="font-size: 18px;">
+iex> [a, b, c] = [1, 2, 3]
+[1, 2, 3]
+iex> a
+1
+iex> b
+2
+iex> c
+3
+						</code></pre>
+					</section>
+					<section>
+						<h3>Pattern matching exercise 3</h3>
+						<p>Bind the a to 1, b to 2 and c to 3 if variable list is already bound to [1, 2, 3]</p>
+						<pre><code class="elixir fragment" data-trim style="font-size: 18px;">
+iex> [ a, b, c] = list
+[1, 2, 3]
+iex> a
+1
+iex> b
+2
+iex> c
+3
+						</code></pre>
+					</section>
+					<section>
+						<h3>Pattern matching exercise 4</h3>
+						<p>Bind each value to a variable, ignoring the last list, from [:atom, "string", {:some, "tuple"}, [1, 2, 3]]</p>
+						<pre><code class="elixir fragment" data-trim style="font-size: 18px;">
+iex> [atom, binary, {:some, tuple_value}, _] = [:atom, "string", {:some, "tuple"}, [1, 2, 3]]
+[:atom, "string", {:some, "tuple"}, [1, 2, 3]]
+iex> atom
+:atom
+iex> binary
+"string"
+iex> tuple_value
+"tuple"
+						</code></pre>
+					</section>
+					<section>
+						<h3>Pattern matching exercise 5</h3>
+						<p>Will this match?</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+[a, b] = [1, [2]]
+						</code></pre>
+						<p class="fragment">Yes</p>
+						<p class="fragment">a bound to 1</p>
+						<p class="fragment">b bound to [2]</p>
+					</section>
+					<section>
+						<h3>Pattern matching exercise 6</h3>
+						<p>Will this match?</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+[a, _b] = [1, [2]]
+						</code></pre>
+						<p class="fragment">Yes</p>
+						<p class="fragment">a bound to 1</p>
+						<p class="fragment">_b bounded but a warning shown by compiler if used. Should be ignored</p>
+					</section>
+					<section>
+						<h3>Pattern matching exercise 7</h3>
+						<p>Will this match?</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+[:a, b] = [:"a", [2]]
+						</code></pre>
+						<p class="fragment">Yes</p>
+						<p class="fragment">b bound to [2]</p>
+						<p class="fragment">The first element is matched literally on both sides but no binding is performed</p>
+					</section>
+					<section>
+						<h3>Pattern matching exercise 8</h3>
+						<p>Will this match?</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+{^a, 2, []} = {2, 2, []}
+						</code></pre>
+						<p class="fragment">No</p>
+						<p class="fragment">a bound to 1 and the pin operator was used to avoid rebinding a</p>
+						<pre><code class="fragment elixir" data-trim style="font-size: 18px;">
+iex> {^a, 2, []} = {2, 2, []}
+** (MatchError) no match of right hand side value: {2, 2, []}
 						</code></pre>
 					</section>
 				</section>
 
 				<section>
 					<section>
+						<h1>Control-flow structures</h1>
+					</section>
+					<section>
+						<h3>case</h3>
+						<p>Allows us to compare a value against many patterns until we find a matching one</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> case {1, 2, 3} do
+...>   {4, 5, 6} ->
+...>     "This clause won't match"
+...>   {1, x, 3} ->
+...>     "This clause will match and bind x to 2 in this clause"
+...>   _ ->
+...>     "This clause would match any value"
+...> end
+"This clause will match and bind x to 2 in this clause"
+						</code></pre>
+					</section>
+					<section>
+						<h3>case</h3>
+						<p>Clauses also allow extra conditions to be specified via guards</p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+iex> case {1, 2, 3} do
+...>   {1, x, 3} when x > 0 ->
+...>     "Will match"
+...>   _ ->
+...>     "Would match, if guard condition were not satisfied"
+...> end
+"Will match"
+						</code></pre>
+					</section>
+					<section>
 						<h3></h3>
-						<h4></h4>
+						<p></p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
 						</code></pre>
-						<h4></h4>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
+						<pre><code class="elixir" data-trim style="font-size: 18px;">
+						</code></pre>
+					</section>
+					<section>
+						<h3></h3>
+						<p></p>
 						<pre><code class="elixir" data-trim style="font-size: 18px;">
 						</code></pre>
 					</section>
